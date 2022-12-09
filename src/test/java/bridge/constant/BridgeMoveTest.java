@@ -1,10 +1,11 @@
 package bridge.constant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class BridgeMoveTest {
@@ -12,80 +13,56 @@ class BridgeMoveTest {
     @ParameterizedTest
     @ValueSource(strings = {"d", "u", "", " ", "a", "da", "ua"})
     void findByInputByNotExist(String input) {
-        // when
         BridgeMove bridgeMove = BridgeMove.findByInput(input);
 
-        // then
         assertThat(bridgeMove).isEqualTo(BridgeMove.MISS);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"D"})
-    void findByInputByDOWNExist(String input) {
-        // when
-        BridgeMove bridgeMove = BridgeMove.findByInput(input);
-
-        // then
-        assertThat(bridgeMove).isEqualTo(BridgeMove.DOWN);
+    static Stream<Arguments> generateFindByInputData() {
+        return Stream.of(
+                Arguments.of("D", BridgeMove.DOWN),
+                Arguments.of("U", BridgeMove.UP)
+        );
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"U"})
-    void findByInputByUPExist(String input) {
-        // when
-        BridgeMove bridgeMove = BridgeMove.findByInput(input);
+    @MethodSource("generateFindByInputData")
+    void findByInputByDOWNExist(String input, BridgeMove bridgeMove) {
+        BridgeMove byInput = BridgeMove.findByInput(input);
 
-        // then
-        assertThat(bridgeMove).isEqualTo(BridgeMove.UP);
+        assertThat(byInput).isEqualTo(bridgeMove);
     }
 
-    @Test
-    void equalFirstLetterWithInputByDOWN() {
-        // given
-        String input = "D";
-        BridgeMove bridgeMove = BridgeMove.DOWN;
-
-        // when
-        boolean result = bridgeMove.equalFirstLetterWithInput(input);
-
-        // then
-        assertTrue(result);
+    static Stream<Arguments> generateEqualFirstLetterWithInputData() {
+        return Stream.of(
+                Arguments.of("D", BridgeMove.DOWN, true),
+                Arguments.of("U", BridgeMove.UP, true),
+                Arguments.of("D", BridgeMove.UP, false),
+                Arguments.of("U", BridgeMove.DOWN, false)
+        );
     }
 
-    @Test
-    void equalFirstLetterWithInputBYUP() {
-        // given
-        String input = "U";
-        BridgeMove bridgeMove = BridgeMove.UP;
+    @ParameterizedTest
+    @MethodSource("generateEqualFirstLetterWithInputData")
+    void equalFirstLetterWithInput_입력값과_BridgeMove의_첫글자가_같은지_확인하는_메서드(String input, BridgeMove bridgeMove, boolean result) {
+        boolean equalFirstLetterWithInput = bridgeMove.equalFirstLetterWithInput(input);
 
-        // when
-        boolean result = bridgeMove.equalFirstLetterWithInput(input);
-
-        // then
-        assertTrue(result);
+        assertThat(equalFirstLetterWithInput).isEqualTo(result);
     }
 
-    @Test
-    void isMiss() {
-        // given
-        BridgeMove bridgeMove = BridgeMove.MISS;
+    static Stream<Arguments> generateIsMissData() {
+        return Stream.of(
+                Arguments.of(BridgeMove.MISS, true),
+                Arguments.of(BridgeMove.DOWN, false),
+                Arguments.of(BridgeMove.UP, false)
+        );
+    }
 
-        // when
+    @ParameterizedTest
+    @MethodSource("generateIsMissData")
+    void isMiss_BridgeMove가_MISS인지_확인하는_메서드(BridgeMove bridgeMove, boolean result) {
         boolean miss = bridgeMove.isMiss();
 
-        // then
-        assertTrue(miss);
-    }
-
-    @Test
-    void isMissByNotMiss() {
-        // given
-        BridgeMove bridgeMove = BridgeMove.UP;
-
-        // when
-        boolean miss = bridgeMove.isMiss();
-
-        // then
-        assertFalse(miss);
+        assertThat(miss).isEqualTo(result);
     }
 }

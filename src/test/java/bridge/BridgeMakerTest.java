@@ -24,10 +24,8 @@ class BridgeMakerTest {
     @ParameterizedTest
     @ValueSource(ints = {3})
     void makeBridge(int size) {
-        // when
         List<String> result = bridgeMaker.makeBridge(size);
 
-        // then
         assertThat(result.size()).isEqualTo(size);
         assertThat(result).allMatch(s -> s.equals(DOWN.getFirstLetter()) || s.equals(UP.getFirstLetter()));
     }

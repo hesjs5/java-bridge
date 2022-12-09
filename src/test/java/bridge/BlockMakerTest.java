@@ -20,20 +20,16 @@ class BlockMakerTest {
     @ParameterizedTest
     @ValueSource(ints = {0})
     void makeBlockDownBlock(int bridgeNumber) {
-        // when
         String block = blockMaker.makeBlock(bridgeNumber);
 
-        // then
         assertThat(block).isEqualTo(DOWN.getFirstLetter());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {1})
     void makeBlockUpBlock(int bridgeNumber) {
-        // when
         String block = blockMaker.makeBlock(bridgeNumber);
 
-        // then
         assertThat(block).isEqualTo(UP.getFirstLetter());
     }
 }

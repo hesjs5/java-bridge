@@ -19,10 +19,8 @@ class BridgeGameStatTest {
 
     @Test
     void restart() {
-        // when
         bridgeGameStat.restart();
 
-        // then
         assertThat(bridgeGameStat.getBridgeMaps()).isEmpty();
         assertThat(bridgeGameStat.getGameStatus()).isEqualTo(GameStatus.FAIL);
         assertThat(bridgeGameStat.getCountOfGame()).isEqualTo(countOfGame + 1);
@@ -30,10 +28,8 @@ class BridgeGameStatTest {
 
     @Test
     void gameWin() {
-        // when
         bridgeGameStat.gameWin();
 
-        // then
         assertThat(bridgeGameStat.getGameStatus()).isEqualTo(GameStatus.SUCCESS);
     }
 }

@@ -1,147 +1,106 @@
 package bridge.constant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class GameCommandTest {
 
+    static Stream<Arguments> generateData() {
+        return Stream.of(
+                Arguments.of("R", GameCommand.RESTART),
+                Arguments.of("Q", GameCommand.QUIT)
+        );
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = {"R", "Q"})
-    void findByString(String string) {
-        // when
+    @MethodSource("generateData")
+    void findByString(String string, GameCommand result) {
         GameCommand gameCommand = GameCommand.findByString(string);
 
-        // then
         assertThat(gameCommand).isNotNull();
         assertThat(gameCommand).isNotSameAs(GameCommand.MISS);
-        assertThat(gameCommand).isBetween(GameCommand.RESTART, GameCommand.QUIT);
+        assertThat(gameCommand).isEqualTo(result);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"r", "q", "", " ", "ar", "aq"})
     void findByStringThatReturnMISS(String string) {
-        // when
         GameCommand gameCommand = GameCommand.findByString(string);
 
-        // then
         assertThat(gameCommand).isNotNull();
         assertThat(gameCommand).isEqualTo(GameCommand.MISS);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"R"})
-    void equalFirstLetterWithStringByR(String string) {
-        // given
-        GameCommand gameCommand = GameCommand.RESTART;
+    @MethodSource("generateData")
+    void equalFirstLetterWithString_입력값과_GameCommand가_일치하면_참을_반환(String string, GameCommand gameCommand) {
+        boolean equalFirstLetterWithString = gameCommand.equalFirstLetterWithString(string);
 
-        // when
-        boolean result = gameCommand.equalFirstLetterWithString(string);
-
-        // then
-        assertTrue(result);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"Q"})
-    void equalFirstLetterWithStringByQ(String string) {
-        // given
-        GameCommand gameCommand = GameCommand.QUIT;
-
-        // when
-        boolean result = gameCommand.equalFirstLetterWithString(string);
-
-        // then
-        assertTrue(result);
+        assertTrue(equalFirstLetterWithString);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"r", "q", "", " ", "ar", "aq"})
-    void equalFirstLetterWithStringByFail(String string) {
-        // given
+    void equalFirstLetterWithString_입력값과_GameCommand가_일치하지_않으면_거짓을_반환(String string) {
         GameCommand gameCommand = GameCommand.QUIT;
 
-        // when
         boolean result = gameCommand.equalFirstLetterWithString(string);
 
-        // then
         assertFalse(result);
     }
 
-    @Test
-    void isMiss() {
-        // given
-        GameCommand gameCommand = GameCommand.MISS;
-
-        // when
-        boolean result = gameCommand.isMiss();
-
-        // then
-        assertTrue(result);
+    static Stream<Arguments> generateIsMissData() {
+        return Stream.of(
+                Arguments.of(GameCommand.MISS, true),
+                Arguments.of(GameCommand.RESTART, false),
+                Arguments.of(GameCommand.QUIT, false)
+        );
     }
 
-    @Test
-    void isMissByNotMiss() {
-        // given
-        GameCommand gameCommand = GameCommand.RESTART;
+    @ParameterizedTest
+    @MethodSource("generateIsMissData")
+    void isMiss(GameCommand gameCommand, boolean result) {
+        boolean miss = gameCommand.isMiss();
 
-        // when
-        boolean result = gameCommand.isMiss();
-
-        // then
-        assertFalse(result);
+        assertThat(miss).isEqualTo(result);
     }
 
-    @Test
-    void isRestart() {
-        // given
-        GameCommand gameCommand = GameCommand.RESTART;
-
-        // when
-        boolean result = gameCommand.isRestart();
-
-        // then
-        assertTrue(result);
+    static Stream<Arguments> generateIsRestartData() {
+        return Stream.of(
+                Arguments.of(GameCommand.MISS, false),
+                Arguments.of(GameCommand.RESTART, true),
+                Arguments.of(GameCommand.QUIT, false)
+        );
     }
 
-    @Test
-    void isRestartByNotRestart() {
-        // given
-        GameCommand gameCommand = GameCommand.MISS;
+    @ParameterizedTest
+    @MethodSource("generateIsRestartData")
+    void isRestart(GameCommand gameCommand, boolean result) {
+        boolean restart = gameCommand.isRestart();
 
-        // when
-        boolean result = gameCommand.isRestart();
-
-        // then
-        assertFalse(result);
+        assertThat(restart).isEqualTo(result);
     }
 
-    @Test
-    void isQuit() {
-        // given
-        GameCommand gameCommand = GameCommand.QUIT;
-
-        // when
-        boolean result = gameCommand.isQuit();
-
-        // then
-        assertTrue(result);
+    static Stream<Arguments> generateIsQuitData() {
+        return Stream.of(
+                Arguments.of(GameCommand.MISS, false),
+                Arguments.of(GameCommand.RESTART, false),
+                Arguments.of(GameCommand.QUIT, true)
+        );
     }
 
-    @Test
-    void isQuitByNotQuit() {
-        // given
-        GameCommand gameCommand = GameCommand.MISS;
+    @ParameterizedTest
+    @MethodSource("generateIsQuitData")
+    void isQuit(GameCommand gameCommand, boolean result) {
+        boolean quit = gameCommand.isQuit();
 
-        // when
-        boolean result = gameCommand.isQuit();
-
-        // then
-        assertFalse(result);
+        assertThat(quit).isEqualTo(result);
     }
 }

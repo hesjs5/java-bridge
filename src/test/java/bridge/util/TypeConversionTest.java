@@ -19,13 +19,8 @@ class TypeConversionTest {
     @ParameterizedTest
     @ValueSource(strings = {"3"})
     void stringToIntByIntegerValue(String input) {
-        // given
-        int expected = 3;
-
-        // when
         int result = stringToInt(input);
 
-        // then
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).isEqualTo(Integer.parseInt(input));
     }
 }

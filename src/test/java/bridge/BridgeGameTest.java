@@ -5,12 +5,16 @@ import static bridge.constant.MoveResult.CAN_NOT_MOVE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import bridge.constant.GameCommand;
 import bridge.constant.GameStatus;
 import bridge.constant.MoveResult;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class BridgeGameTest {
@@ -22,35 +26,33 @@ class BridgeGameTest {
         bridgeGame = new BridgeGame();
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {0})
-    void moveByU(int count) {
-        List<String> bridge = List.of("U", "D", "D");
-        String player = "U";
+    static Stream<Arguments> generateData() {
+        return Stream.of(
+                Arguments.of(List.of("U", "D", "D"), "U", 0),
+                Arguments.of(List.of("U", "D", "D"), "D", 1)
+        );
+    }
 
-        MoveResult result = bridgeGame.move(bridge, player, count);
+    @ParameterizedTest
+    @MethodSource("generateData")
+    void move(List<String> bridge, String playerInput,int countOfRound) {
+        MoveResult result = bridgeGame.move(bridge, playerInput, countOfRound);
 
         assertThat(result).isEqualTo(CAN_MOVE);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {1})
-    void moveByD(int count) {
-        List<String> bridge = List.of("U", "D", "D");
-        String player = "D";
-
-        MoveResult result = bridgeGame.move(bridge, player, count);
-
-        assertThat(result).isEqualTo(CAN_MOVE);
+    static Stream<Arguments> generateCanNotMoveData() {
+        return Stream.of(
+                Arguments.of(List.of("U", "D", "D"), "U", 1),
+                Arguments.of(List.of("U", "D", "D"), "U", 2),
+                Arguments.of(List.of("U", "D", "D"), "D", 0)
+        );
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0})
-    void moveByNotMove(int count) {
-        List<String> bridge = List.of("U", "D", "D");
-        String player = "D";
-
-        MoveResult result = bridgeGame.move(bridge, player, count);
+    @MethodSource("generateCanNotMoveData")
+    void moveByNotMove(List<String> bridge, String playerInput,int countOfRound) {
+        MoveResult result = bridgeGame.move(bridge, playerInput, countOfRound);
 
         assertThat(result).isEqualTo(CAN_NOT_MOVE);
     }
@@ -95,7 +97,7 @@ class BridgeGameTest {
 
     @ParameterizedTest
     @ValueSource(ints = {3, 4, 5})
-    void checkGameWinByNotWIng(int bridgeSize) {
+    void checkGameWinByNotWin(int bridgeSize) {
         bridgeGame.checkGameWin(bridgeSize);
 
         assertThat(bridgeGame.getBridgeGameStat().getGameStatus()).isEqualTo(GameStatus.FAIL);

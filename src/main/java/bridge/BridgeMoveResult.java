@@ -1,5 +1,7 @@
 package bridge;
 
+import java.util.Objects;
+
 public class BridgeMoveResult {
 
     private final String moving;
@@ -29,5 +31,22 @@ public class BridgeMoveResult {
 
     public boolean canMove() {
         return this.moveResult.equals("O");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        BridgeMoveResult that = (BridgeMoveResult) o;
+        return Objects.equals(moving, that.moving) && Objects.equals(moveResult, that.moveResult);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(moving, moveResult);
     }
 }

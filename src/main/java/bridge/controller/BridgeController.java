@@ -25,46 +25,47 @@ public class BridgeController {
     }
 
     public void run() {
-        System.out.println("다리 건너기 게임을 시작합니다.");
-        System.out.println();
+        System.out.println("다리 건너기 게임을 시작합니다.\n");
 
         int bridgeSize = inputView.readBridgeSize();
         BridgeMaker bridgeMaker = new BridgeMaker(new BridgeRandomNumberGenerator());
         Bridge bridge = new Bridge(bridgeMaker.makeBridge(bridgeSize));
 
-        int countOfTry = 1;
-        int round = 0;
-        BridgeMap bridgeMap = new BridgeMap();
-        GameResult gameResult = new GameResult();
-        System.out.println(bridge);
-        do {
-            String moving = inputView.readMoving();
-            String moveResult = bridgeGame.move(bridge, moving, round);
-            BridgeMoveResult bridgeMoveResult = new BridgeMoveResult(moving, moveResult);
-            bridgeMap.add(bridgeMoveResult);
-            outputView.printMap(bridgeMap);
-
-            if (bridgeMoveResult.canNotMove()) {
-                String gameCommand = inputView.readGameCommand();
-                if (gameCommand.equals("R")) {
-                    bridgeGame.retry();
-                    bridgeMap = new BridgeMap();
-                    round = 0;
-                    countOfTry++;
-                }
-
-                if (gameCommand.equals("Q")) {
-                    gameResult.gameOver();
-                }
-            }
-
-            if (bridgeMoveResult.canMove()) {
-                round++;
-            }
-
-            gameResult = new GameResult(bridgeMap, gameResult.getGameStatus(), countOfTry);
-        } while (round < bridgeSize && !gameResult.isGameOver());
+        GameResult gameResult = play(bridgeSize, bridge);
 
         outputView.printResult(gameResult);
+    }
+
+    private BridgeMoveResult getBridgeMoveResult(Bridge bridge, BridgeMap bridgeMap) {
+        String moving = inputView.readMoving();
+        String moveResult = bridgeGame.move(bridge, moving);
+        BridgeMoveResult bridgeMoveResult = new BridgeMoveResult(moving, moveResult);
+        bridgeMap.add(bridgeMoveResult);
+        outputView.printMap(bridgeMap);
+        return bridgeMoveResult;
+    }
+
+    private void checkCanNotMove(BridgeMap bridgeMap, GameResult gameResult, BridgeMoveResult bridgeMoveResult) {
+        if (bridgeMoveResult.canNotMove()) {
+            String gameCommand = inputView.readGameCommand();
+            if (gameCommand.equals("R")) {
+                bridgeGame.retry(bridgeMap, gameResult);
+            }
+            if (gameCommand.equals("Q")) {
+                gameResult.gameOver();
+            }
+        }
+    }
+
+    private GameResult play(int bridgeSize, Bridge bridge) {
+        BridgeMap bridgeMap = new BridgeMap();
+        GameResult gameResult = new GameResult();
+        do {
+            BridgeMoveResult bridgeMoveResult = getBridgeMoveResult(bridge, bridgeMap);
+            checkCanNotMove(bridgeMap, gameResult, bridgeMoveResult);
+            gameResult.update(bridgeMap, gameResult.getGameStatus());
+        } while (bridgeGame.isRoundLessThan(bridgeSize) && !gameResult.isGameOver());
+
+        return gameResult;
     }
 }

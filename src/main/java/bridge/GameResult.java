@@ -11,13 +11,7 @@ public class GameResult {
     public GameResult() {
         this.map = new BridgeMap();
         this.gameStatus = true;
-        this.countOfTry = 0;
-    }
-
-    public GameResult(BridgeMap map, boolean gameStatus, int countOfTry) {
-        this.map = map;
-        this.gameStatus = gameStatus;
-        this.countOfTry = countOfTry;
+        this.countOfTry = 1;
     }
 
     public boolean isGameOver() {
@@ -26,10 +20,6 @@ public class GameResult {
 
     public void gameOver() {
         this.gameStatus = false;
-    }
-
-    public void gameWin() {
-        this.gameStatus = true;
     }
 
     public boolean getGameStatus() {
@@ -42,6 +32,15 @@ public class GameResult {
         }
 
         return "실패";
+    }
+
+    public void addCountOfTry() {
+        countOfTry++;
+    }
+
+    public void update(BridgeMap bridgeMap, boolean gameStatus) {
+        this.map = bridgeMap;
+        this.gameStatus = gameStatus;
     }
 
     public BridgeMap getMap() {

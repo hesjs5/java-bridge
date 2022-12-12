@@ -15,4 +15,11 @@ public class Validator {
             throw new IllegalArgumentException("[ERROR] 이동할 칸은 D 또는 U여야 합니다.");
         }
     }
+
+    public static void validateGameCommand(String gameCommand) {
+        boolean notGameCommand = !(gameCommand.equals("R") || (gameCommand.equals("Q")));
+        if (notGameCommand) {
+            throw new IllegalArgumentException("[ERROR] 게임 명령어는 R 또는 Q여야 합니다.");
+        }
+    }
 }

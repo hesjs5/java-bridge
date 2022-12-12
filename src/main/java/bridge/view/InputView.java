@@ -2,6 +2,7 @@ package bridge.view;
 
 import static bridge.util.TypeConversion.stringToInt;
 
+import bridge.GameCommand;
 import bridge.util.Validator;
 import camp.nextstep.edu.missionutils.Console;
 
@@ -44,14 +45,18 @@ public class InputView {
         do {
             System.out.println("이동할 칸을 선택해주세요. (위: U, 아래: D)");
             moving = Console.readLine();
-            try {
-                Validator.validateMoving(moving);
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
+            checkMoving(moving);
         } while (!(moving.equals("D") || (moving.equals("U"))));
 
         return moving;
+    }
+
+    private void checkMoving(String moving) {
+        try {
+            Validator.validateMoving(moving);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -62,15 +67,19 @@ public class InputView {
         do {
             System.out.println("게임을 다시 시도할지 여부를 입력해주세요. (재시도: R, 종료: Q)");
             gameCommand = Console.readLine();
-            if (!(gameCommand.equals("R") || (gameCommand.equals("Q")))) {
-                try {
-                    throw new IllegalArgumentException("[ERROR]");
-                } catch (IllegalArgumentException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
+            checkGameCommand(gameCommand);
         } while (!(gameCommand.equals("R") || (gameCommand.equals("Q"))));
 
         return gameCommand;
+    }
+
+    private GameCommand checkGameCommand(String gameCommand) {
+        try {
+            Validator.validateGameCommand(gameCommand);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return new GameCommand(gameCommand);
     }
 }

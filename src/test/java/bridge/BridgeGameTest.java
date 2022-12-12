@@ -1,6 +1,7 @@
 package bridge;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -23,22 +24,38 @@ class BridgeGameTest {
 
     static Stream<Arguments> generateData() {
         return Stream.of(
-                Arguments.of("D", 0, "X"),
-                Arguments.of("U", 1, "X"),
-                Arguments.of("U", 1, "X"),
-                Arguments.of("U", 0, "O"),
-                Arguments.of("D", 1, "O"),
-                Arguments.of("D", 2, "O")
+                Arguments.of(List.of("D"), "X"),
+                Arguments.of(List.of("U"), "O"),
+                Arguments.of(List.of("U", "U"), "OX"),
+                Arguments.of(List.of("U", "D"), "OO"),
+                Arguments.of(List.of("U", "D", "U"), "OOX"),
+                Arguments.of(List.of("U", "D", "D"), "OOO")
         );
     }
 
     @ParameterizedTest
     @MethodSource("generateData")
-    void move(String moving, int round, String moveResult) {
+    void move(List<String> movings, String moveResult) {
         Bridge bridge = new Bridge(List.of("U", "D", "D"));
 
-        String isMove = bridgeGame.move(bridge, moving, round);
+        StringBuilder result = new StringBuilder();
+        for (String moving : movings) {
+            result.append(bridgeGame.move(bridge, moving));
+        }
 
-        assertThat(isMove).isEqualTo(moveResult);
+        assertThat(result.toString()).isEqualTo(moveResult);
+    }
+
+    @ParameterizedTest
+    @MethodSource("generateData")
+    void retry(List<String> movings) {
+        Bridge bridge = new Bridge(List.of("U", "D", "D"));
+        for (String moving : movings) {
+            bridgeGame.move(bridge, moving);
+        }
+
+        bridgeGame.retry(new BridgeMap(), new GameResult());
+
+        assertTrue(bridgeGame.isRoundLessThan(1));
     }
 }

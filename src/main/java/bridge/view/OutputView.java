@@ -4,7 +4,6 @@ import bridge.BridgeMap;
 import bridge.BridgeMoveResult;
 import bridge.GameResult;
 import java.text.MessageFormat;
-import java.util.List;
 
 /**
  * 사용자에게 게임 진행 상황과 결과를 출력하는 역할을 한다.
@@ -22,9 +21,8 @@ public class OutputView {
         upStringBuilder.append("[");
         downStringBuilder.append("[");
 
-        List<BridgeMoveResult> map = bridgeMap.getMap();
         int index = 0;
-        for (BridgeMoveResult bridgeMoveResult : map) {
+        for (BridgeMoveResult bridgeMoveResult : bridgeMap) {
             upStringBuilder.append(" ");
             downStringBuilder.append(" ");
 
@@ -42,7 +40,7 @@ public class OutputView {
             upStringBuilder.append(" ");
             downStringBuilder.append(" ");
 
-            if ((map.size() != 1) && (index < map.size() - 1)) {
+            if (bridgeMap.isAppendableDividingLine(index)) {
                 upStringBuilder.append("|");
                 downStringBuilder.append("|");
             }

@@ -27,4 +27,12 @@ public class Bridge {
             throw new IllegalArgumentException("[ERROR] 다리의 값은 U 또는 D여야 합니다.");
         }
     }
+
+    public boolean match(String moving, int round) {
+        if (bridge.contains(moving)) {
+            return bridge.get(round).equals(moving);
+        }
+
+        return false;
+    }
 }

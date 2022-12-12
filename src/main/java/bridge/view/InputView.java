@@ -1,7 +1,7 @@
 package bridge.view;
 
-import bridge.GameCommand;
-import bridge.util.TypeConversion;
+import static bridge.util.TypeConversion.stringToInt;
+
 import bridge.util.Validator;
 import camp.nextstep.edu.missionutils.Console;
 
@@ -14,11 +14,25 @@ public class InputView {
      * 다리의 길이를 입력받는다.
      */
     public int readBridgeSize() {
-        System.out.println("다리의 길이를 입력해주세요.");
-        String readLine = Console.readLine();
-        int bridgeSize = TypeConversion.stringToInt(readLine);
-        Validator.validateBridgeSize(bridgeSize);
+        int bridgeSize;
+        do {
+            System.out.println("다리의 길이를 입력해주세요.");
+            String readLine = Console.readLine();
+            bridgeSize = checkBridgeSize(readLine);
+            System.out.println();
+        } while (!((3 <= bridgeSize) && (bridgeSize <= 20)));
 
+        return bridgeSize;
+    }
+
+    private int checkBridgeSize(String readLine) {
+        int bridgeSize = Integer.MIN_VALUE;
+        try {
+            bridgeSize = stringToInt(readLine);
+            Validator.validateBridgeSize(bridgeSize);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
         return bridgeSize;
     }
 
@@ -26,21 +40,37 @@ public class InputView {
      * 사용자가 이동할 칸을 입력받는다.
      */
     public String readMoving() {
-        System.out.println("이동할 칸을 선택해주세요. (위: U, 아래: D)");
-        String readLine = Console.readLine();
-        Validator.validateMoving(readLine);
-        // TODO: 2022-12-12 Moving 객체를 만들까 말까 고민해보기
+        String moving;
+        do {
+            System.out.println("이동할 칸을 선택해주세요. (위: U, 아래: D)");
+            moving = Console.readLine();
+            try {
+                Validator.validateMoving(moving);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        } while (!(moving.equals("D") || (moving.equals("U"))));
 
-        return readLine;
+        return moving;
     }
 
     /**
      * 사용자가 게임을 다시 시도할지 종료할지 여부를 입력받는다.
      */
-    public GameCommand readGameCommand() {
-        System.out.println("게임을 다시 시도할지 여부를 입력해주세요. (재시도: R, 종료: Q)");
-        String readLine = Console.readLine();
+    public String readGameCommand() {
+        String gameCommand;
+        do {
+            System.out.println("게임을 다시 시도할지 여부를 입력해주세요. (재시도: R, 종료: Q)");
+            gameCommand = Console.readLine();
+            if (!(gameCommand.equals("R") || (gameCommand.equals("Q")))) {
+                try {
+                    throw new IllegalArgumentException("[ERROR]");
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        } while (!(gameCommand.equals("R") || (gameCommand.equals("Q"))));
 
-        return new GameCommand(readLine);
+        return gameCommand;
     }
 }

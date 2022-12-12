@@ -35,4 +35,9 @@ public class Bridge {
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        return bridge.toString();
+    }
 }

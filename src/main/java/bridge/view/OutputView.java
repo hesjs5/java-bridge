@@ -18,44 +18,70 @@ public class OutputView {
     public void printMap(BridgeMap bridgeMap) {
         StringBuilder upStringBuilder = new StringBuilder();
         StringBuilder downStringBuilder = new StringBuilder();
-        upStringBuilder.append("[");
-        downStringBuilder.append("[");
 
+        appendPrefix(upStringBuilder, downStringBuilder);
+        makeSentence(bridgeMap, upStringBuilder, downStringBuilder);
+        appendSuffix(upStringBuilder, downStringBuilder);
+        concatStringBuilder(upStringBuilder, downStringBuilder);
+
+        System.out.println(upStringBuilder);
+    }
+
+    private void makeSentence(BridgeMap bridgeMap, StringBuilder upStringBuilder, StringBuilder downStringBuilder) {
         int index = 0;
         for (BridgeMoveResult bridgeMoveResult : bridgeMap) {
-            upStringBuilder.append(" ");
-            downStringBuilder.append(" ");
-
-            String moveResult = bridgeMoveResult.getMoveResult();
-            if (bridgeMoveResult.isUpMoving()) {
-                upStringBuilder.append(moveResult);
-                downStringBuilder.append(" ");
-            }
-
-            if (bridgeMoveResult.isDownMoving()) {
-                downStringBuilder.append(moveResult);
-                upStringBuilder.append(" ");
-            }
-
-            upStringBuilder.append(" ");
-            downStringBuilder.append(" ");
-
+            appendMoveResult(upStringBuilder, downStringBuilder, bridgeMoveResult);
             if (bridgeMap.isAppendableDividingLine(index)) {
                 upStringBuilder.append("|");
                 downStringBuilder.append("|");
             }
-
             index++;
         }
+    }
 
+    private void appendPrefix(StringBuilder upStringBuilder, StringBuilder downStringBuilder) {
+        upStringBuilder.append("[");
+        downStringBuilder.append("[");
+    }
+
+    private void appendSpace(StringBuilder upStringBuilder, StringBuilder downStringBuilder) {
+        upStringBuilder.append(" ");
+        downStringBuilder.append(" ");
+    }
+
+    private void appendMoveResult(StringBuilder upStringBuilder, StringBuilder downStringBuilder,
+                                  BridgeMoveResult bridgeMoveResult) {
+        appendSpace(upStringBuilder, downStringBuilder);
+        appendUpMoving(upStringBuilder, downStringBuilder, bridgeMoveResult);
+        appendDownMoving(upStringBuilder, downStringBuilder, bridgeMoveResult);
+        appendSpace(upStringBuilder, downStringBuilder);
+    }
+
+    private void appendUpMoving(StringBuilder upStringBuilder, StringBuilder downStringBuilder,
+                                BridgeMoveResult bridgeMoveResult) {
+        if (bridgeMoveResult.isUpMoving()) {
+            upStringBuilder.append(bridgeMoveResult.getMoveResult());
+            downStringBuilder.append(" ");
+        }
+    }
+
+    private void appendDownMoving(StringBuilder upStringBuilder, StringBuilder downStringBuilder,
+                                  BridgeMoveResult bridgeMoveResult) {
+        if (bridgeMoveResult.isDownMoving()) {
+            downStringBuilder.append(bridgeMoveResult.getMoveResult());
+            upStringBuilder.append(" ");
+        }
+    }
+
+    private void appendSuffix(StringBuilder upStringBuilder, StringBuilder downStringBuilder) {
         upStringBuilder.append("]");
         downStringBuilder.append("]");
+    }
 
+    private void concatStringBuilder(StringBuilder upStringBuilder, StringBuilder downStringBuilder) {
         upStringBuilder.append("\n");
         upStringBuilder.append(downStringBuilder);
-
-        System.out.println(upStringBuilder);
-        System.out.println();
+        upStringBuilder.append("\n");
     }
 
     /**

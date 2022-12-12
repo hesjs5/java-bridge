@@ -8,6 +8,8 @@ import static org.assertj.core.util.Lists.newArrayList;
 import camp.nextstep.edu.missionutils.test.NsTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class ApplicationTest extends NsTest {
 
@@ -26,11 +28,11 @@ class ApplicationTest extends NsTest {
         assertRandomNumberInRangeTest(() -> {
             run("3", "U", "D", "U");
             assertThat(output()).contains(
-                "최종 게임 결과",
-                "[ O |   | O ]",
-                "[   | O |   ]",
-                "게임 성공 여부: 성공",
-                "총 시도한 횟수: 1"
+                    "최종 게임 결과",
+                    "[ O |   | O ]",
+                    "[   | O |   ]",
+                    "게임 성공 여부: 성공",
+                    "총 시도한 횟수: 1"
             );
 
             int upSideIndex = output().indexOf("[ O |   | O ]");
@@ -40,11 +42,92 @@ class ApplicationTest extends NsTest {
     }
 
     @Test
+    void 기능_테스트2() {
+        assertRandomNumberInRangeTest(() -> {
+            run("3", "U", "U", "R", "U", "D", "D");
+            assertThat(output()).contains(
+                    "최종 게임 결과",
+                    "[ O |   |   ]",
+                    "[   | O | O ]",
+                    "게임 성공 여부: 성공",
+                    "총 시도한 횟수: 2"
+            );
+
+            int upSideIndex = output().indexOf("[ O |   |   ]");
+            int downSideIndex = output().indexOf("[   | O | O ]");
+            assertThat(upSideIndex).isLessThan(downSideIndex);
+        }, 1, 0, 0);
+    }
+
+    @Test
+    void 기능_테스트3() {
+        assertRandomNumberInRangeTest(() -> {
+            run("3", "U", "U", "Q");
+            assertThat(output()).contains(
+                    "최종 게임 결과",
+                    "[ O | X ]",
+                    "[   |   ]",
+                    "게임 성공 여부: 실패",
+                    "총 시도한 횟수: 1"
+            );
+
+            int upSideIndex = output().indexOf("[ O | X ]");
+            int downSideIndex = output().indexOf("[   |   ]");
+            assertThat(upSideIndex).isLessThan(downSideIndex);
+        }, 1, 0, 0);
+    }
+
+    @Test
+    void 기능_테스트4() {
+        assertRandomNumberInRangeTest(() -> {
+            run("3", "U", "U", "R", "U", "D", "U", "Q");
+            assertThat(output()).contains(
+                    "최종 게임 결과",
+                    "[ O |   | X ]",
+                    "[   | O |   ]",
+                    "게임 성공 여부: 실패",
+                    "총 시도한 횟수: 2"
+            );
+
+            int upSideIndex = output().indexOf("[ O |   | X ]");
+            int downSideIndex = output().indexOf("[   | O |   ]");
+            assertThat(upSideIndex).isLessThan(downSideIndex);
+        }, 1, 0, 0);
+    }
+
+    @Test
     void 예외_테스트() {
         assertSimpleTest(() -> {
             runException("a");
             assertThat(output()).contains(ERROR_MESSAGE);
         });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1a", "1", "21"})
+    void 예외_테스트_다리_길이_입력_예외_발생(String bridgeSize) {
+        assertSimpleTest(() -> {
+            runException(bridgeSize);
+            assertThat(output()).contains(ERROR_MESSAGE);
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"u", "d", "1U", "1D", " ", "UU", "DD"})
+    void 예외_테스트_이동할_칸_입력_예외_발생(String moving) {
+        assertSimpleTest(() -> {
+            runException("3", moving);
+            assertThat(output()).contains(ERROR_MESSAGE);
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"r", "q", "1R", "1Q", " ", "RR", "QQ"})
+    void 예외_테스트_게임_커멘드_예외_발생(String gameCommand) {
+        assertRandomNumberInRangeTest(() -> {
+            runException("3", "U", "U", gameCommand);
+            assertThat(output()).contains(ERROR_MESSAGE);
+        }, 1, 0, 0);
     }
 
     @Override

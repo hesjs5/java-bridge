@@ -26,4 +26,18 @@ class ValidatorTest {
     void validateBridgeSize_3부터_20사이의_값인_경우_예외_발생하지_않음(int bridgeSize) {
         assertDoesNotThrow(() -> Validator.validateBridgeSize(bridgeSize));
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"a", "u", "d", "1", "0", " ", "", "U1", "Da"})
+    void validateMoving_D_또는_U의_값이_아닌_경우_예외_발생(String moving) {
+        assertThatThrownBy(() -> Validator.validateMoving(moving))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(ERROR_MESSAGE);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"U", "D"})
+    void validateMoving_D_또는_U의_값인_경우_예외_발생하지_않음(String moving) {
+        assertDoesNotThrow(() -> Validator.validateMoving(moving));
+    }
 }

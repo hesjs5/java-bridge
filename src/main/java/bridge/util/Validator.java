@@ -8,4 +8,11 @@ public class Validator {
             throw new IllegalArgumentException("[ERROR] 다리의 길이는 3부터 20 사이의 숫자여야 합니다.");
         }
     }
+
+    public static void validateMoving(String moving) {
+        boolean notRightMoving = !(moving.equals("D") || moving.equals("U"));
+        if (notRightMoving) {
+            throw new IllegalArgumentException("[ERROR] 이동할 칸은 D 또는 U여야 합니다.");
+        }
+    }
 }
